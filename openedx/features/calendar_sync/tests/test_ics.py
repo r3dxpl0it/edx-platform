@@ -11,7 +11,7 @@ from lms.djangoapps.courseware.courses import _Assignment
 from openedx.core.djangoapps.content.course_overviews.tests.factories import CourseOverviewFactory
 from openedx.core.djangoapps.site_configuration.tests.factories import SiteFactory
 from openedx.features.calendar_sync import get_calendar_event_id
-from openedx.features.calendar_sync.ics import generate_ics_for_user_course
+from openedx.features.calendar_sync.ics import generate_ics_files_for_user_course
 from student.tests.factories import UserFactory
 
 
@@ -70,7 +70,7 @@ END:VCALENDAR
         """ Uses generate_ics_for_user_course to create ics files for the given assignments """
         with patch('openedx.features.calendar_sync.ics.get_course_assignments') as mock_get_assignments:
             mock_get_assignments.return_value = assignments
-            return generate_ics_for_user_course(self.course, self.user, self.request)
+            return generate_ics_files_for_user_course(self.course, self.user, self.request)
 
     def assert_ics(self, *assignments):
         """ Asserts that the generated and expected ics for the given assignments are equal """
