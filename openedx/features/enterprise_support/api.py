@@ -560,10 +560,56 @@ def get_enterprise_consent_url(request, course_id, user=None, return_to=None, en
 def get_enterprise_learner_data(user):
     """
     Client API operation adapter/wrapper
+
+    [{
+      'groups': [],
+      'data_sharing_consent_records': [],
+      'enterprise_customer': {
+        'identity_provider': None,
+        'branding_configuration': None,
+        'slug': 'test-enterprise',
+        'enable_data_sharing_consent': True,
+        'active': True,
+        'enable_learner_portal': True,
+        'name': 'Test Enterprise',
+        'enforce_data_sharing_consent': 'at_enrollment',
+        'enable_portal_code_management_screen': True,
+        'uuid': 'b5092a08-d03c-4250-962c-ae1fc59ab63a',
+        'enable_audit_enrollment': False,
+        'contact_email': None,
+        'enable_audit_data_reporting': False,
+        'site': {
+          'name': 'localhost:18000',
+          'domain': 'localhost:18000'
+        },
+        'enable_portal_reporting_config_screen': True,
+        'replace_sensitive_sso_username': False,
+        'sync_learner_profile_data': False,
+        'enable_portal_subscription_management_screen': False
+      },
+      'id': 4,
+      'active': True,
+      'user': {
+        'last_name': '',
+        'email': 'enterprise_learner_1@example.com',
+        'id': 17,
+        'is_active': True,
+        'first_name': '',
+        'is_staff': False,
+        'username': 'enterprise_learner_1',
+        'date_joined': '2020-06-09T18:46:13.068769Z'
+      },
+      'user_id': 17
+    }]
     """
+    print('in get_enterprise_learner_data')
+    print('1: {}'.format(user))
     if user.is_authenticated:
+        print('2: {}'.format(user.is_authenticated))
         enterprise_learner_data = EnterpriseApiClient(user=user).fetch_enterprise_learner_data(user)
+        print('3: {}'.format(enterprise_learner_data))
         if enterprise_learner_data:
+            print('4: {}'.format(enterprise_learner_data['results']))
             return enterprise_learner_data['results']
 
 
