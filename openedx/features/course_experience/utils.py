@@ -299,14 +299,26 @@ def dates_banner_should_display(course_key, user):
     for section_key in block_data.get_children(course_usage_key):
         for subsection_key in block_data.get_children(section_key):
             subsection_due_date = block_data.get_xblock_field(subsection_key, 'due', None)
-            if subsection_due_date and (
-                not block_data.get_xblock_field(subsection_key, 'complete', False)
-                and block_data.get_xblock_field(subsection_key, 'graded', False)
-                and subsection_due_date < timezone.now()
-            ):
-                # Display the banner if the due date for an incomplete graded subsection
-                # has passed
+            if (subsection_due_date and subsection_due_date < timezone.now() and
+                    not is_subsection_complete_for_assignment(block_data, subsection_key)):
+                # Display the banner if the due date for an incomplete graded subsection has passed
                 return True, block_data.get_xblock_field(subsection_key, 'contains_gated_content', False)
 
     # Don't display the banner if there were no missed deadlines
     return False, False
+
+
+def is_subsection_complete_for_assignment(block_data, subsection_key):
+    """
+    Considers a subsection complete only if all scored & graded units are complete.
+
+    This is different from the normal `complete` flag because pieces of the subsection that are informative (like
+    readings or videos) do not count. We only care about actual homework content.
+    """
+    for unit_key in block_data.get_children(subsection_key):
+        if (not block_data.get_xblock_field(unit_key, 'complete', False) and
+                block_data.get_xblock_field(unit_key, 'scored', False) and
+                block_data.get_xblock_field(unit_key, 'graded', False)
+        ):
+            return False
+    return True
