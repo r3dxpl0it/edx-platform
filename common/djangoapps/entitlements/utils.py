@@ -51,10 +51,9 @@ def is_course_run_entitlement_fulfillable(
     # Verify that the course run can currently be enrolled
     enrollment_start = course_overview.enrollment_start
     enrollment_end = course_overview.enrollment_end
-    can_enroll = (
-        (not enrollment_start or enrollment_start < compare_date)
-        and (not enrollment_end or enrollment_end > compare_date)
-    )
+    # Allow entitlements to be used to upgrade to verified track past
+    # the course enrollment date and before the upgrade deadline
+    can_enroll = not enrollment_start or enrollment_start < compare_date
 
     # Is the user already enrolled in the Course Run
     is_enrolled = CourseEnrollment.is_enrolled(entitlement.user, course_run_key)
