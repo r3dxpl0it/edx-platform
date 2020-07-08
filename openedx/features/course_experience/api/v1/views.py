@@ -1,9 +1,15 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.exceptions import APIException, ParseError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.generics import RetrieveAPIView
+
+from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
+from edx_rest_framework_extensions.auth.session.authentication import SessionAuthenticationAllowInactiveUser
 
 from openedx.core.djangoapps.schedules.utils import reset_self_paced_schedule
+from openedx.core.lib.api.authentication import BearerAuthenticationAllowInactiveUser
+from openedx.features.course_experience.api.v1.serializers import CourseDeadlinesMobileSerializer
 
 
 class UnableToResetDeadlines(APIException):
@@ -30,3 +36,43 @@ def reset_course_deadlines(request):
         return Response({'message': 'Deadlines successfully reset.'})
     except Exception:
         raise UnableToResetDeadlines
+
+
+class CourseDeadlinesMobileView(RetrieveAPIView):
+    """
+    **Use Cases**
+
+        Request course deadline info for mobile
+
+    **Example Requests**
+
+        GET api/course_experience/v1/course_deadlines_info/{course_key}
+
+    **Response Values**
+
+        Body consists of the following fields:
+
+        missed_deadlines: (bool) Whether the user has missed any graded content deadlines for the given course.
+        missed_gated_content: (bool) Whether the user has missed any gated content for the given course.
+        content_type_gating_enabled: (bool) Whether content type gating is enabled for this enrollment.
+        verified_upgrade_link: (str) The URL to ecommerce IDA for purchasing the verified upgrade.
+
+    **Returns**
+
+        * 200 on success with above fields.
+        * 401 if the user is not authenticated.
+        * 404 if the course is not available or cannot be seen.
+    """
+
+    authentication_classes = (
+        JwtAuthentication,
+        BearerAuthenticationAllowInactiveUser,
+        SessionAuthenticationAllowInactiveUser,
+    )
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CourseDeadlinesMobileSerializer
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_serializer_context()
+        serializer = self.get_serializer({}, context=context)
+        return Response(serializer.data)
