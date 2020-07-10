@@ -24,6 +24,7 @@ USE_NEW_EMAIL_TEMPLATES = WaffleFlag(
     flag_name='use_new_email_templates',
 )
 
+
 def use_new_templates_for_id_verification_emails():
     return USE_NEW_EMAIL_TEMPLATES.is_enabled()
 
@@ -45,6 +46,6 @@ REDIRECT_TO_IDV_MICROFRONTEND = WaffleFlag(
     flag_name='redirect_to_idv_microfrontend',
 )
 
+
 def redirect_to_idv_microfrontend():
     return REDIRECT_TO_IDV_MICROFRONTEND.is_enabled()
-

@@ -254,16 +254,17 @@ class IDVerificationService(object):
             Else, returns URL for corresponding view.
         """
         location = ''
-
         if redirect_to_idv_microfrontend():
             location = '{}/id-verification'.format(settings.ACCOUNT_MICROFRONTEND_URL)
             if course_id:
-                location = location + '?{}'.format(course_id)
+                location = location + '?{}'.format([str(course_id)])
         else:
-            location = reverse(url_name, args=(course_id))
-        
+            if course_id:
+                location = reverse(url_name, args=[str(course_id)])
+            else:
+                location = reverse(url_name)
         return location
-    
+
     @classmethod
     def email_reverify_url(cls):
         """
@@ -271,9 +272,7 @@ class IDVerificationService(object):
             If waffle flag is active, returns URL for IDV microfrontend.
             Else, returns URL for reverify view.
         """
-
         if redirect_to_idv_microfrontend():
             return '{}/id-verification'.format(settings.ACCOUNT_MICROFRONTEND_URL)
         else:
             return '{}{}'.format(settings.LMS_ROOT_URL, reverse('verify_student_reverify'))
-
