@@ -14,7 +14,6 @@ from .accounts.views import (
     AccountRetirementView,
     AccountViewSet,
     DeactivateLogoutView,
-    DemographicsStatusView,
     LMSAccountRetirementView,
     UsernameReplacementView
 )
@@ -166,10 +165,5 @@ urlpatterns = [
         r'^v1/preferences/{}/(?P<preference_key>[a-zA-Z0-9_]+)$'.format(settings.USERNAME_PATTERN),
         PreferencesDetailView.as_view(),
         name='preferences_detail_api'
-    ),
-    url(
-        r'^v1/accounts/demographics_status/$',
-        DemographicsStatusView.as_view(),
-        name='demographics_status'
     ),
 ]

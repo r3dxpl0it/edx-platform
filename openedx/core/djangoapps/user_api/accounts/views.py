@@ -46,7 +46,6 @@ from openedx.core.djangoapps.course_groups.models import UnregisteredLearnerCoho
 from openedx.core.djangoapps.credit.models import CreditRequest, CreditRequirementStatus
 from openedx.core.djangoapps.lang_pref import LANGUAGE_KEY
 from openedx.core.djangoapps.profile_images.images import remove_profile_images
-from openedx.core.djangoapps.programs.utils import is_user_enrolled_in_program_type
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_names, set_has_profile_image
 from openedx.core.djangoapps.user_authn.exceptions import AuthFailedError
 from openedx.core.djangolib.oauth2_retirement_utils import retire_dot_oauth2_models
@@ -1218,26 +1217,3 @@ class UsernameReplacementView(APIView):
                 new_username,
             )
         return True
-
-
-class DemographicsStatusView(APIView):
-    """
-
-    """
-    authentication_classes = (JwtAuthentication, SessionAuthentication)
-    permission_classes = (permissions.IsAuthenticated, )
-
-    def get(self, request):
-        """
-        GET /api/user/v1/accounts/demographics_status
-
-        This is a Web API to determine whether or not we should show Demographics to a learner
-        based on their enrollment status.
-        """
-        user = request.user
-        # Learner enrolled in MicroBachelors Program?
-        is_user_in_microbachelors_program = is_user_enrolled_in_program_type(user, "microbachelors")
-        # User in Enterprise?
-        is_enterprise_user = False
-        display_demographics = is_user_in_microbachelors_program or is_enterprise_user
-        return Response({'display': display_demographics})

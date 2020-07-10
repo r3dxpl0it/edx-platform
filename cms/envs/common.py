@@ -1490,6 +1490,7 @@ INSTALLED_APPS = [
     'experiments',
 
     'openedx.core.djangoapps.external_user_ids',
+    'openedx.core.djangoapps.demographics',
     # so sample_task is available to celery workers
     'openedx.core.djangoapps.heartbeat',
 
